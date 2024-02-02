@@ -6,6 +6,7 @@
 MCM_CC
 │  README.md
 └─src
+    ├─C_solve $ C题解答资源文件
     ├─ctex_template $ 比赛模板
     └─prob_data $ 赛题出现的数据
         ├─C
