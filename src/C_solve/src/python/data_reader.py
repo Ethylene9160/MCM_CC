@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 hint = [
     'match_id',
     'player1',
@@ -47,4 +48,36 @@ hint = [
     'serve_depth',
     'return_depth'
 ]
+
+
+def read_data(csv_file_path):
+    # 从CSV文件中读取数据
+    data = pd.read_csv(csv_file_path)
+    return data
+
+def read_single_data(single_line):
+    # 将单行数据转换为字典
+    single_map = {}
+    for i, value in enumerate(single_line):
+        single_map[hint[i]] = value
+    return single_map
+
+def line_to_data(single_line):
+    # 将单行数据转换为列表
+    single_list = []
+    for i, value in enumerate(single_line):
+        if i == 0:
+            continue
+        single_list.append(value)
+    return single_list
+
+def getList(data_path):
+    # 加载CSV数据
+    data = read_data(data_path)
+
+    # 直接将DataFrame中的每行转换为字典并添加到playerList
+    data_list = []
+    for index, row in data.iterrows():
+        data_list.append(line_to_data(row))
+    return data_list
 
