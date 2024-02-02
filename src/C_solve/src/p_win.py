@@ -31,14 +31,6 @@ for i in range(len(a1)):
         winner.append(1)
     elif a[i] < b[i]:
         winner.append(0)
-    elif a[i] == b[i]:
+    else:
         print(a[i], b[i],i)
 
-print(a1[972])
-print(a2[972])
-# print(a1)
-# print(a)
-# print(b)
-
-# for i in range(len(a1)):
-#     print(a[i], b[i], winner[i])
