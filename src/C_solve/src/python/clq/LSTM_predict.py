@@ -7,7 +7,7 @@ from scipy.io import savemat
 import LSTM_Method
 import pandas as pd
 
-data_path = 'statics/hot_data.csv'
+data_path = 'hot_data.csv'
 data = {}
 features = {}  # 元素为list
 labels = {}
@@ -119,7 +119,7 @@ try:
 
     test_out = LSTM_Method.inve_nor(test_out, min4, max4)
     test_labels = LSTM_Method.inve_nor(test_labels, min4, max4)
-    savemat('test_out.mat', {'test_out': test_out,'test_labels':test_labels})
+    savemat('test_out.mat', {'test_out': test_out,'test_labels':test_labels[:100]})
     # print(test_out, test_labels)
     # test_features = LSTM_Method.inve_nor(test_features, min3, max3)
 except Exception as e:
