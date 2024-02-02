@@ -12,7 +12,7 @@ MCM_CC
         └─D
 ```
 
-速览地址：https://ethylene9160.github.io/MCM
+速览地址：https://ethylene9160.github.io/MCM或https://ethy9160.site/MCM
 
 Overleaf网址：https://www.overleaf.com/7596571415fmmhstkbgvvy#f8e031（任何点击这个链接的overleaf用户都将拥有编辑权限）
 
