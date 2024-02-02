@@ -26,7 +26,9 @@ def slide_windows(data, historical, slide_step=1, in_start=0, n_out=1):
 
 
 ## 归一化
-def nor_maxmin(my_tensor,min,max):
+def nor_maxmin(my_tensor):
+    min = []
+    max = []
     for i in range(my_tensor.size(2)):
         min.append(torch.min(my_tensor[:, :, i]))
         max.append(torch.max(my_tensor[:, :, i]))
