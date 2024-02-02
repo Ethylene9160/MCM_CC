@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import python.PCA as mPCA
 import python.SVM as mSVM
 
-map = {};
+map = {}
 
 def load_data():
     data = pd.read_csv('statics/data_dictionary.csv')
