@@ -1,16 +1,11 @@
+import numpy as np
+from matplotlib import pyplot as plt
+from sklearn.metrics import r2_score, mean_squared_error, explained_variance_score
+import pandas as pd
+import python.data_reader as mDR
+
 from ethy.model.MCModel import MCModel
 
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
-from sklearn.svm import SVR  # 支持向量回归
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import r2_score
-from sklearn.metrics import accuracy_score
-import matplotlib.pyplot as plt
-
-import python.data_reader as mDR
 
 def read_and_combine_data(file_paths):
     data_frames = []
@@ -36,7 +31,7 @@ def append_momentum(combined_df, max_shift):
     combined_df['Player2_Momentum_shift_pre'] = combined_df['Player2_Momentum'].shift(-1).fillna(0)
     return combined_df
 
-def SVM_data_process(file_path, max_shift):
+def LR_data_process(file_path, max_shift):
     combined_df = read_and_combine_data(file_path)
     # 在最后一列加上计算好的两个玩家的momentum
     combined_df = append_momentum(combined_df, max_shift)
@@ -61,39 +56,60 @@ def SVM_data_process(file_path, max_shift):
     labels = combined_df['Player1_Momentum']
     return features, labels
 
-class MSMSVM(MCModel):
-    def __init__(self):
-        # 训练SVM模型
-        super().__init__()
-        # self.svm_model = SVR()
-        self.svm_model = SVR(kernel='rbf', C=1.0, epsilon=0.1)
-    def train(self, X, y):
-        self.svm_model.fit(X, y)
+class mLinearRegression:
+    def __init__(self, learning_rate=0.15, num_iterations=2100):
+        self.learning_rate = learning_rate
+        self.num_iterations = num_iterations
+
+    def fit(self, X, y):
+        self.weights = np.random.randn(X.shape[1])
+        self.bias = np.random.randn()
+        for i in range(self.num_iterations):
+            predictions = np.dot(X, self.weights) + self.bias
+            errors = predictions - y
+            gradient = np.dot(X.T, errors) / X.shape[0]
+            bias_gradient = np.sum(errors) / X.shape[0]
+            self.weights -= self.learning_rate * gradient
+            self.bias -= self.learning_rate * bias_gradient
+        return self
 
     def predict(self, X):
-        return self.svm_model.predict(X)
+        return np.dot(X, self.weights) + self.bias
+
+class MCMLR(MCModel):
+    def __init__(self):
+        super().__init__()
+        self.lr_model = mLinearRegression()
+
+    def train(self, X, y):
+        self.lr_model.fit(X, y)
+
+    def predict(self, X):
+        return self.lr_model.predict(X)
 
     def getModelParam(self):
         pass
 
-def SVM_main():
-    # 使用方法：
-    model = MSMSVM()
-    # 读取数据
-    X_train, y_train = SVM_data_process(['../../statics/training/session_train.csv'], 5)
-    X_test, y_test = SVM_data_process(['../../statics/training/session_test.csv'], 5)
+def LR_main():
+    model = MCMLR()
+    X_train, y_train = LR_data_process(['../../statics/training/session_train.csv'], 5)
+    X_test, y_test = LR_data_process(['../../statics/training/session_test.csv'], 5)
 
     model.train(X_train, y_train)
     predictions = model.predict(X_test)
     r2 = r2_score(y_test, predictions)
     print(f'R^2 Score: {r2}')
-    #draw pic.
-    plt.figure(figsize=(8, 5))
+    rmse = np.sqrt(mean_squared_error(y_test, predictions))
+    print(f'RMSE: {rmse}')
+    evs = explained_variance_score(y_test, predictions)
+    print(f'Explained Variance Score: {evs}')
+
+    plt.figure()
     plt.plot(y_test, label='True')
     plt.plot(predictions, label='Predict')
     plt.legend()
     plt.show()
-
+    print('R^2 Score:', model.r2(y_test, predictions))
     print('loss:', model.MSELoss(y_test, predictions))
     accuracy, precision, recall, f1 = model.judge(y_test, predictions)
     print('accuracy:', accuracy)
@@ -102,5 +118,4 @@ def SVM_main():
     print('f1:', f1)
 
 if __name__ == '__main__':
-    SVM_main()
-    # pass
+    LR_main()

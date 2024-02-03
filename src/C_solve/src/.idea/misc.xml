@@ -3,5 +3,9 @@
   <component name="Black">
     <option name="sdkName" value="tra" />
   </component>
+<<<<<<< HEAD
   <component name="ProjectRootManager" version="2" project-jdk-name="tra" project-jdk-type="Python SDK" />
+=======
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12" project-jdk-type="Python SDK" />
+>>>>>>> 88dcf0b91f91233e221be919e096ef210eb1262f
 </project>

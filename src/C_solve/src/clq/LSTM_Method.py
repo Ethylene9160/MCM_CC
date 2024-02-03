@@ -22,6 +22,9 @@ def slide_windows(data, historical, slide_step=1, in_start=0, n_out=1):
             # 训练数据以滑动步长slide_step截取
             features[i, :, :] = data[in_start:in_end]
             labels[i, :, :] = data[in_end].unsqueeze(0)
+            # features[i, :, :] = data[in_start:in_end, :]
+            # # 计算当前时刻与下一时刻的差值
+            # labels[i, :, :] = data[in_end:out_end, :] - data[in_end - 1:in_end, :]
         in_start += slide_step  # 滑动步长为slide_step，即往前移一步
     return features, labels, seq_num
 
@@ -54,11 +57,17 @@ def ger_feature_label(data, historical,num_samples,match_num):
         labels = torch.cat((labels, new_labels), dim=0)
     return features, labels,seq_num
 
-def data_processing(n_train,historical,batch_size):
+def get_data(player_list,header):
+    return_data = []
+    for i in range(len(player_list)):
+        return_data.append(player_list[i][f'{header}'])
+    return return_data
+
+def data_processing(n_train,historical,batch_size,total):
     data = {}
     features = {}  # 元素为list
     labels = {}
-    for i in range(1, 16):
+    for i in range(1, total):
         data_path = f'../statics/29splits/session{i}.csv'
         original_data = mDR.read_data(data_path)
         player_list = []
@@ -70,9 +79,11 @@ def data_processing(n_train,historical,batch_size):
         # getMonmentum函数返回两个列表，分别代表两个选手的momentum趋势。
         # 传入的参数是包含对手对战的字典信息的列表。
         p1m, p2m = mDR.getMomentum(player_list)
+        winner = get_data(player_list, 'point_victor')
         p1m = torch.tensor(p1m).view(-1, 1)
         p2m = torch.tensor(p2m).view(-1, 1)
-        pm = torch.cat((p1m, p2m), dim=1)
+        winner = torch.tensor(winner).view(-1, 1)
+        pm = torch.cat((p1m, p2m,winner), dim=1)
         if i not in data:
             data[i] = []
         data[i].append(pm)

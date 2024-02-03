@@ -3,8 +3,6 @@
 
 
 #include<vector>
-
-#include<vector>
 #include<iostream>
 #include <cassert>
 #include <stdexcept> // throw exceptions
@@ -189,16 +187,25 @@ public:
 	
 	double sigmoid(double x)
 	{
-		return x>0.0? x:0.0;
+//		return x>0.0? x:0.0;
 		if(x > 0.0) return x;
 		return 0.01*x;
 //	    return 1 / (1 + exp(-x));
 	}
 
+	double real_sigmoid(double x){
+	    return 1 / (1 + exp(-x));
+	}
+
+	double real_d_sigmoid(double x){
+	    double y = real_sigmoid(x);
+        return y * (1 - y);
+    }
+
 	
 	double d_sigmoid(double x)
 	{
-		return x>0.0?1.0:0.0;
+//		return x>0.0?1.0:0.0;
 		if(x > 0.0) return 1.0;
 		return 0.01; 
 //	    double y = sigmoid(x);
@@ -213,10 +220,26 @@ public:
 	    o[0].assign(data.begin(), data.end());
 	   
 	    int i_max = this->h.size() - 1;
-	    for (int i = 0; i < i_max; i++) {
+	    for (int i = 0; i < i_max-1; i++) {
 	       
 	        this->calculateOutput(o[i], h[i + 1], w[i], b[i + 1], o[i + 1]);
 	        
+	    }
+        my_vector& x = o[i_max-1];
+        my_vector& y = h[i_max];
+        single_power& power = w[i_max-1];
+        my_vector& bias = b[i_max];
+        my_vector& o_sigmoid = o[i_max];
+	    //last layer, using sigmoid
+	    for (int j = 0; j < y.size(); ++j) {
+	        y[j] = 0.0;
+	        for (int k = 0; k < x.size(); k++) {
+
+
+	            y[j] += x[k] * power[k][j];
+	        }
+	        y[j] = (y[j] + bias[j]);
+	        o_sigmoid[j] = this->real_sigmoid(y[j]);
 	    }
 	
 	   
@@ -240,7 +263,7 @@ public:
 	            for (int neuronIndex = 0; neuronIndex < 1; ++neuronIndex) {
 	                double error = label[dataIndex] - output[neuronIndex];
 	                //outputLayerGradient.push_back(error * d_sigmoid(output[neuronIndex]));
-	                outputLayerGradient.push_back(error * d_sigmoid(output_h[neuronIndex]));
+	                outputLayerGradient.push_back(error * real_d_sigmoid(output_h[neuronIndex]));
 	            }
 	            //printf("train-backward\n");
 	           
@@ -252,7 +275,7 @@ public:
 	                for (int neuronIndex = 0; neuronIndex < h[layerIndex].size(); ++neuronIndex) {
 	                    double gradientSum = 0;
 	                    for (int nextLayerNeuronIndex = 0; nextLayerNeuronIndex < h[layerIndex + 1].size(); ++nextLayerNeuronIndex) {
-	                        //assert(layerIndex < w.size() && neuronIndex < w[layerIndex].size() && nextLayerNeuronIndex < w[layerIndex][neuronIndex].size()); // È·±£È¨ÖØË÷ÒýÔÚ·¶Î§ÄÚ
+	                        //assert(layerIndex < w.size() && neuronIndex < w[layerIndex].size() && nextLayerNeuronIndex < w[layerIndex][neuronIndex].size()); // È·ï¿½ï¿½È¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú·ï¿½Î§ï¿½ï¿½
 	                        gradientSum += w[layerIndex][neuronIndex][nextLayerNeuronIndex] * layerGradients.back()[nextLayerNeuronIndex];
 	                    }
 	                    layerGradient.push_back(gradientSum * d_sigmoid(h[layerIndex][neuronIndex]));
@@ -343,7 +366,11 @@ public:
 	    return output; 
 	
 	}
-
+    double predict_reg(my_vector& input)
+    {
+        my_vector& output = forward(input);
+        return output[0];
+    }
 
 	double predict(my_vector& input, double threshold)
 	{
@@ -395,6 +422,10 @@ public:
 	    return neuron->predict(data, 0.5);
 	    //return 0.0;
 	}
+
+	double predict_reg(std::vector<double> data) {
+        return neuron->predict_reg(data);
+    }
 	
 	int predict(std::vector<double> data, int t){
 		t=0;
