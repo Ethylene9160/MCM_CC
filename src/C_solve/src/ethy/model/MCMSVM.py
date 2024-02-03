@@ -64,6 +64,7 @@ def SVM_data_process(file_path, max_shift):
 class MSMSVM(MCModel):
     def __init__(self):
         # 训练SVM模型
+        super().__init__()
         self.svm_model = SVR()
 
     def train(self, X, y):
