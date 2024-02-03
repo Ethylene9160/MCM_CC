@@ -101,6 +101,8 @@ def SVM_main():
     print('recall:', recall)
     print('f1:', f1)
 
+    model.save('../model_params/SVM_Model.pkl')  # 传入文件路径进行保存
+
 if __name__ == '__main__':
     SVM_main()
     # pass
