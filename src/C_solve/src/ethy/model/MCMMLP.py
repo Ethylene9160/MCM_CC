@@ -112,7 +112,8 @@ if __name__ == '__main__':
                             'p1_games', 'p2_games', \
                             'p1_score', 'p2_score', \
 
-                            'p1_winner', 'p1_ace']
+                            'p1_winner', 'p1_ace'
+    ]
     train_player_list = mDR.getList('../../statics/training/session_train.csv')
     test_player_list = mDR.getList('../../statics/training/session_test.csv')
     X_train,y_train = mDR.getXY(train_player_list, keys, 5)
