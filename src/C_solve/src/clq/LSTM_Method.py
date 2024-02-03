@@ -59,7 +59,7 @@ def data_processing(n_train,historical,batch_size):
     features = {}  # 元素为list
     labels = {}
     for i in range(1, 16):
-        data_path = f'../../statics/29splits/session{i}.csv'
+        data_path = f'../statics/29splits/session{i}.csv'
         original_data = mDR.read_data(data_path)
         player_list = []
         for index, row in original_data.iterrows():
