@@ -1,0 +1,117 @@
+﻿题干,编码,选项
+Q1-match_id,,
+,1.0,2023-wimbledon-1301
+,2.0,2023-wimbledon-1302
+,3.0,2023-wimbledon-1303
+,4.0,2023-wimbledon-1304
+,5.0,2023-wimbledon-1305
+,6.0,2023-wimbledon-1306
+,7.0,2023-wimbledon-1307
+,8.0,2023-wimbledon-1308
+,9.0,2023-wimbledon-1309
+,10.0,2023-wimbledon-1312
+,11.0,2023-wimbledon-1313
+,12.0,2023-wimbledon-1314
+,13.0,2023-wimbledon-1315
+,14.0,2023-wimbledon-1316
+,15.0,2023-wimbledon-1401
+,16.0,2023-wimbledon-1402
+,17.0,2023-wimbledon-1403
+,18.0,2023-wimbledon-1404
+,19.0,2023-wimbledon-1405
+,20.0,2023-wimbledon-1406
+,21.0,2023-wimbledon-1407
+,22.0,2023-wimbledon-1408
+,23.0,2023-wimbledon-1501
+,24.0,2023-wimbledon-1502
+,25.0,2023-wimbledon-1503
+,26.0,2023-wimbledon-1504
+,27.0,2023-wimbledon-1601
+,28.0,2023-wimbledon-1602
+,29.0,2023-wimbledon-1701
+Q2-player1,,
+,1.0,Carlos Alcaraz
+,2.0,Alexander Zverev
+,3.0,Frances Tiafoe
+,4.0,Alejandro Davidovich Fokina
+,5.0,Daniil Medvedev
+,6.0,Jiri Lehecka
+,7.0,Christopher Eubanks
+,8.0,Laslo Djere
+,9.0,Jannik Sinner
+,10.0,Denis Shapovalov
+,11.0,Andrey Rublev
+,12.0,Alexander Bublik
+,13.0,Lorenzo Musetti
+,14.0,Stan Wawrinka
+,15.0,Grigor Dimitrov
+,16.0,Roman Safiullin
+,17.0,Hubert Hurkacz
+Q3-player2,,
+,1.0,Nicolas Jarry
+,2.0,Matteo Berrettini
+,3.0,Grigor Dimitrov
+,4.0,Holger Rune
+,5.0,Marton Fucsovics
+,6.0,Tommy Paul
+,7.0,Christopher O'Connell
+,8.0,Stefanos Tsitsipas
+,9.0,Quentin Halys
+,10.0,Liam Broady
+,11.0,David Goffin
+,12.0,Maximilian Marterer
+,13.0,Hubert Hurkacz
+,14.0,Novak Djokovic
+,15.0,Jiri Lehecka
+,16.0,Daniel Elahi Galan
+,17.0,Denis Shapovalov
+,18.0,Alexander Bublik
+,19.0,Christopher Eubanks
+,20.0,Roman Safiullin
+,21.0,Daniil Medvedev
+Q12-p1_score,,
+,1.0,0
+,2.0,15
+,3.0,40
+,4.0,AD
+,5.0,30
+,6.0,1
+,7.0,2
+,8.0,3
+,9.0,4
+,10.0,5
+,11.0,6
+,12.0,7
+,13.0,8
+,14.0,9
+Q13-p2_score_数据标签,,
+,1.0,0
+,2.0,15
+,3.0,30
+,4.0,40
+,5.0,AD
+,6.0,1
+,7.0,2
+,8.0,3
+,9.0,4
+,10.0,5
+,11.0,6
+,12.0,7
+,13.0,9
+,14.0,10
+Q25-winner_shot_type,,
+,1.0,0
+,2.0,F
+,3.0,B
+Q44-serve_width,,
+,1.0,BC
+,2.0,B
+,3.0,BW
+,4.0,W
+,5.0,C
+Q45-serve_depth,,
+,1.0,NCTL
+,2.0,CTL
+Q46-return_depth,,
+,1.0,ND
+,2.0,D

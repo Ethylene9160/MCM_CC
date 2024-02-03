@@ -4,7 +4,7 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from torch.utils.data import TensorDataset, DataLoader
 from scipy.io import savemat
-import LSTM_Method
+import LSTM_Method as lm
 import python.data_reader as mDR
 import pandas as pd
 
@@ -17,12 +17,7 @@ n_train = 10 ## !!!!!!!!!!!!!!!!!!!!!
 input_size = 2
 hidden_size = 100
 output_size = 2
-# train_features = torch.zeros(1,5, input_size)
-# train_labels = torch.zeros(1,5,input_size)
-# test_features = torch.zeros(1,5, input_size)
-# test_labels =  torch.zeros(1,5, input_size)
 loss = nn.MSELoss()
-# optimizer = optim.Adam(model.parameters(), lr=0.001)
 num_epochs = 20
 losses = []
 
@@ -53,7 +48,7 @@ try:
             features[i] = []
             labels[i] = []
         # print(f"1:{i}")
-        feature, label,seq = LSTM_Method.slide_windows(data[i][0], historical)
+        feature, label,seq = lm.slide_windows(data[i][0], historical)
         # print(f"2:{i}")
         features[i].append(feature)
         labels[i].append(label)
@@ -73,10 +68,10 @@ try:
         test_labels = torch.cat((test_labels,labels[i]), dim=0)
 
 
-    train_features, min1,max1 = LSTM_Method.nor_maxmin(train_features)
-    train_labels, min2,max2 = LSTM_Method.nor_maxmin(train_labels)
-    test_features,min3,max3 = LSTM_Method.nor_maxmin(test_features)
-    test_labels,min4,max4 = LSTM_Method.nor_maxmin(test_labels)
+    train_features, min1,max1 = lm.nor_maxmin(train_features)
+    train_labels, min2,max2 = lm.nor_maxmin(train_labels)
+    test_features,min3,max3 = lm.nor_maxmin(test_features)
+    test_labels,min4,max4 = lm.nor_maxmin(test_labels)
 
     dataset = TensorDataset(train_features, train_labels)
     train_iter = DataLoader(dataset, batch_size, shuffle=True)
@@ -101,42 +96,46 @@ try:
             return out.view(out.size(0), -1, 2)  # 重新调整输出形状 ???????????????
 
 
-    def train(model, train_iter, loss, epochs, lr):
-        # def train(model, features, labels, loss, epochs, lr):
-        global l
-        trainer = torch.optim.Adam(model.parameters(), lr)
-        for epoch in range(epochs):
-            for X, y in train_iter:
-                # for X, y in zip(features[epoch, :, :], labels[epoch, :, :]):
+        def train_model(self, train_iter, loss, epochs, lr):
+            # def train(model, features, labels, loss, epochs, lr):
+            # super().train(mode=True)
+            global l
+            trainer = torch.optim.Adam(self.parameters(), lr)
+            for epoch in range(epochs):
+                for X, y in train_iter:
+                    # for X, y in zip(features[epoch, :, :], labels[epoch, :, :]):
+                    l = loss(self(X), y)
+                    # l = ((model(X)-y) ** 2)/len(y)
+                    trainer.zero_grad()
+                    l.mean().backward()
+                    trainer.step()
+                print(f'epoch {epoch + 1}, ')
+                print(f'loss: {l.item()}')
 
-                l = loss(model(X), y)
-                # l = ((model(X)-y) ** 2)/len(y)
-                trainer.zero_grad()
-                l.mean().backward()
-                trainer.step()
-            print(f'epoch {epoch + 1}, ')
-            print(f'loss: {l.item()}')
-
+        def predict(self, test_features):
+            self.eval()
+            with torch.no_grad():
+                prediction = self(test_features)
+            self.train()
+            return prediction
     #
     my_model = LSTMModel(input_size, hidden_size, output_size)
-    train(my_model, train_iter, loss, num_epochs, 0.01)
+    my_model.train_model(train_iter, loss, num_epochs, 0.01)
     torch.save(my_model.state_dict(), 'output/model_m.pt')
 
     my_state = torch.load('output/model_m.pt')
     model = LSTMModel(input_size, hidden_size, output_size)
     model.load_state_dict(my_state)
 
-    with torch.no_grad():
-        test_out = model(test_features[:1000])
-        # print(test_out)
-        test_loss = loss(test_out, test_labels[:1000])
+    output_len = 200
+    test_out = model.predict(test_features[:output_len])
+    # print(test_out)
+    test_loss = loss(test_out, test_labels[:output_len])
     print("Test Loss:", test_loss.item())
 
-    test_out = LSTM_Method.inve_nor(test_out, min4, max4)
-    test_labels = LSTM_Method.inve_nor(test_labels, min4, max4)
-    savemat('output/test_out_m.mat', {'test_out': test_out,'test_labels':test_labels[:1000]})
-    # print(test_out, test_labels)
-    # test_features = LSTM_Method.inve_nor(test_features, min3, max3)
+    test_out = lm.inve_nor(test_out, min4, max4)
+    test_labels = lm.inve_nor(test_labels, min4, max4)
+    savemat('output/test_out_m.mat', {'test_out': test_out,'test_labels':test_labels[:output_len]})
 
 except Exception as e:
     print(e)

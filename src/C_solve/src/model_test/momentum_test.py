@@ -7,7 +7,7 @@ import python.PCA as mPCA
 import python.data_reader as mDR
 from python.data_reader import hint
 
-data_path = '../statics/29splits/session1.csv'
+data_path = '../statics/29splits/session22.csv'
 
 if __name__ == '__main__':
     # 加载CSV数据。这个函数在data_reader.py中定义
@@ -30,9 +30,17 @@ if __name__ == '__main__':
     # 传入的参数是包含对手对战的字典信息的列表。
     p1m, p2m = mDR.getMomentum(player_list)
     # 在matlab中，绘制出momentum的两条曲线的变化趋势。
-    plt.figure()
+    plt.figure(figsize=(8, 5))
+    plt.subplot(2, 1, 1)
     plt.plot(p1m, label='p1')
     plt.plot(p2m, label='p2')
+    plt.legend()
+    # plt.show()
+
+    p1s,p2s = mDR.getP1P2SetScore(player_list)
+    plt.subplot(2, 1, 2)
+    plt.plot(p1s, label='p1')
+    plt.plot(p2s, label='p2')
     plt.legend()
     plt.show()
 
