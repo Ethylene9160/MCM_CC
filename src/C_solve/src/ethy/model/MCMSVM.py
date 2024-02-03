@@ -78,12 +78,13 @@ class MSMSVM(MCModel):
 
 def SVM_main():
     # 使用方法：
-    model = MSMSVM()
+    model = MCModel()
     # 读取数据
     X_train, y_train = SVM_data_process(['../../statics/training/session_train.csv'], 5)
     X_test, y_test = SVM_data_process(['../../statics/training/session_test.csv'], 5)
 
-    model.train(X_train, y_train)
+    # model.train(X_train, y_train)
+    model = model.load('../model_params/svm_model.pkl')
     predictions = model.predict(X_test)
     r2 = r2_score(y_test, predictions)
     print(f'R^2 Score: {r2}')
@@ -100,6 +101,7 @@ def SVM_main():
     print('precision:', precision)
     print('recall:', recall)
     print('f1:', f1)
+    # model.save('../model_params/svm_model.pkl')
 
 if __name__ == '__main__':
     SVM_main()
