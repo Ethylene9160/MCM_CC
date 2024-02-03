@@ -246,4 +246,7 @@ if __name__ == '__main__':
     print('precision:', precision)
     print('recall:', recall)
     print('f1:', f1)
-    model.save('../model_params/mlp_model.pkl')
+    # 帮助我获取一个命令行输入，输入y保存模型，否则退出。
+    ipt = input('save model?y/other_keys to exit:')
+    if ipt == 'y':
+        model.save('../model_params/mlp_model.pkl')
