@@ -8,13 +8,12 @@ import LSTM_Method
 import python.data_reader as mDR
 import pandas as pd
 
-data_path = '../statics/29splits/session1.csv'
 data = {}
 features = {}  # 元素为list
 labels = {}
 historical = 5
 batch_size= 64
-n_train = 3 ## !!!!!!!!!!!!!!!!!!!!!
+n_train = 10 ## !!!!!!!!!!!!!!!!!!!!!
 input_size = 2
 hidden_size = 100
 output_size = 2
@@ -29,7 +28,7 @@ losses = []
 
 
 try:
-    for i in range(1, 6):
+    for i in range(1, 16):
         data_path = f'../../statics/29splits/session{i}.csv'
         original_data = mDR.read_data(data_path)
         # 读取数据，存储在player_list中。
@@ -121,9 +120,9 @@ try:
     #
     my_model = LSTMModel(input_size, hidden_size, output_size)
     train(my_model, train_iter, loss, num_epochs, 0.01)
-    torch.save(my_model.state_dict(), 'model_m.pt')
+    torch.save(my_model.state_dict(), 'output/model_m.pt')
 
-    my_state = torch.load('model_m.pt')
+    my_state = torch.load('output/model_m.pt')
     model = LSTMModel(input_size, hidden_size, output_size)
     model.load_state_dict(my_state)
 
@@ -135,9 +134,10 @@ try:
 
     test_out = LSTM_Method.inve_nor(test_out, min4, max4)
     test_labels = LSTM_Method.inve_nor(test_labels, min4, max4)
-    savemat('test_out_m.mat', {'test_out': test_out,'test_labels':test_labels[:1000]})
+    savemat('output/test_out_m.mat', {'test_out': test_out,'test_labels':test_labels[:1000]})
     # print(test_out, test_labels)
     # test_features = LSTM_Method.inve_nor(test_features, min3, max3)
+
 except Exception as e:
     print(e)
 
