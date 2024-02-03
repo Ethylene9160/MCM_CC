@@ -216,10 +216,19 @@ def read_single_data(single_line):
     return single_map
 
 def getP1P2SetScore(wholeMap):
-    p1_score = []
-    p2_score = []
+    # p1_score = []
+    # p2_score = []
+    # for single_map in wholeMap:
+    #     p1_score.append(single_map['p1_sets'])
+    #     p2_score.append(single_map['p2_sets'])
+    # return p1_score, p2_score
+    return getP1P2Sets(wholeMap, 'p1_sets', 'p2_sets')
+
+def getP1P2Sets(wholeMap, p1_index, p2_index):
+    p1_list = []
+    p2_list = []
     for single_map in wholeMap:
-        p1_score.append(single_map['p1_sets'])
-        p2_score.append(single_map['p2_sets'])
-    return p1_score, p2_score
+        p1_list.append(single_map[p1_index])
+        p2_list.append(single_map[p2_index])
+    return p1_list, p2_list
 
