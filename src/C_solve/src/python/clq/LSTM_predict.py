@@ -7,13 +7,13 @@ from scipy.io import savemat
 import LSTM_Method
 import pandas as pd
 
-data_path = 'hot_data.csv'
+data_path = '../statics/29splits/session1.csv'
 data = {}
 features = {}  # 元素为list
 labels = {}
 historical = 5
 batch_size= 64
-n_train = 5
+n_train = 10
 input_size = 2
 hidden_size = 100
 output_size = 2
@@ -112,14 +112,14 @@ try:
     model.load_state_dict(my_state)
 
     with torch.no_grad():
-        test_out = model(test_features[:100])
+        test_out = model(test_features[:1000])
         # print(test_out)
-        test_loss = loss(test_out, test_labels[:100])
+        test_loss = loss(test_out, test_labels[:1000])
     print("Test Loss:", test_loss.item())
 
     test_out = LSTM_Method.inve_nor(test_out, min4, max4)
     test_labels = LSTM_Method.inve_nor(test_labels, min4, max4)
-    savemat('test_out.mat', {'test_out': test_out,'test_labels':test_labels[:100]})
+    savemat('test_out.mat', {'test_out': test_out,'test_labels':test_labels[:1000]})
     # print(test_out, test_labels)
     # test_features = LSTM_Method.inve_nor(test_features, min3, max3)
 except Exception as e:

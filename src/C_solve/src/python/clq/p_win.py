@@ -1,36 +1,43 @@
 import psycopg2
 from psycopg2 import sql
 import csv
+from scipy.io import savemat
+import csv
+import os
 
-data_path = 'statics/Wimbledon_featured_matches.csv'
-new_data_path = 'statics/Wimbledon_featured_matches_new.csv'
-a1 = []
-a2 = [0]
-b1 = []
-b2 = [0]
-winner = []
-a=[]
-b=[]
+# 连接到数据库
+conn = psycopg2.connect(
+    dbname="mcm",
+    user   = "postgres",
+    password = "777777",
+    host = "localhost",
+    port = "5432"
+)
 
-with open(data_path, 'r') as f:
-    reader = csv.reader(f)
-    header = next(reader)
-    # print(header[16], header[17])
-    for row in reader:
-        a1.append(int(row[16]))
-        a2.append(int(row[16]))
-        b1.append( int(row[17]))
-        b2.append(int(row[17]))
+# 建立游标
+cur = conn.cursor()
 
-for i in range(len(a1)):
-    a.append(a1[i]-a2[i])
-    b.append(b1[i]-b2[i])
+# 写select语句
+one_match = """
+            SELECT
+                match_id,
+                COUNT(game_no) AS total_games,
+                SUM(CASE WHEN point_victor = '1' THEN 1 ELSE 0 END) AS won_rounds,
+                (SUM(CASE WHEN point_victor = '1' THEN 1 ELSE 0 END) * 100.0 / COUNT(game_no)) AS win_rate
+            FROM mcm_data
+            GROUP BY
+                match_id;
+            """
 
-for i in range(len(a1)):
-    if a[i] > b[i]:
-        winner.append(1)
-    elif a[i] < b[i]:
-        winner.append(0)
-    else:
-        print(a[i], b[i],i)
+cur.execute(one_match)
+conn.commit()
+one_match_win = cur.fetchall()
+# CSV文件的名称
+filename = "../../statics/one_match_win.csv"
+
+# 写入CSV文件
+with open(filename, 'w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerows(one_match_win)
+
 
