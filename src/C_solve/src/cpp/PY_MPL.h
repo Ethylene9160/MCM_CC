@@ -141,7 +141,6 @@ private:
 	
 public:
 	int LR_VOKE;				//after LR_VOKE epoches, the prog will print the loss value , current w and b.
-		
 	/*
 	*/
 	MyNeuron():MyNeuron(100,0.01){}
@@ -401,8 +400,61 @@ public:
 	my_vector getLosses(){
 		return this->losses; 
 	}
-	
-	
+
+	double getLR(){
+	    return this->learning;
+	}
+
+	my_power getW(){
+        return this->w;
+    }
+
+    std::vector<my_vector> getB(){
+        return this->b;
+    }
+
+    std::vector<my_vector> getH(){
+        return this->h;
+    }
+
+    int getEpochs(){
+        return this->epoches;
+    }
+
+
+
+	void load(int epoches, double lr, my_power& w, std::vector<my_vector>& b, std::vector<my_vector>&h, my_vector losses, int LR_VOKE){
+	    printf("start load!\n");
+	    init(epoches, lr, h);
+	    printf("init over!\n");
+	    for(int i = 0; i < w.size();++i){
+            for(int j = 0; j < w[i].size();++j){
+                for(int k = 0; k < w[i][j].size();++k){
+                    this->w[i][j][k] = w[i][j][k];
+                }
+            }
+        }
+        for(int i = 0; i < h.size();++i){
+            for(int j = 0; j < h[i].size();++j){
+                this->h[i][j] = 0;
+            }
+        }
+
+        for(int i = 0; i < b.size();++i){
+            for(int j = 0; j < b[i].size();++j){
+                this->b[i][j] = b[i][j];
+            }
+        }
+        this->losses = losses;
+        this->LR_VOKE = LR_VOKE;
+
+	//my_power w;					//power, dimension is three
+	//my_vector output;			//dinal output, dimension is one
+	//std::vector<my_vector> h;	//layer output storage; dimension is 2;
+	//std::vector<my_vector> o;	//after sigmoid output layer.
+	//std::vector<my_vector> b;	//bias, dimension is 2 to fix each layer h.
+	//my_vector losses;
+	}
 };
 
 
@@ -417,6 +469,10 @@ public:
 		//std::vector<int> v= {2};
 		neuron = new MyNeuron(epoches,lr,input_size,hiddenLayers);
 	}
+
+	void load(int epoches, double lr, my_power& w, std::vector<my_vector>& b, std::vector<my_vector>&h, my_vector losses, int LR_VOKE){
+        neuron->load(epoches, lr, w, b, h, losses, LR_VOKE);
+    }
 	
 	double predict(std::vector<double> data) {
 	    return neuron->predict(data, 0.5);
@@ -458,14 +514,37 @@ public:
 		return neuron->getLoss(inputs, labels);
 	}
 	
-	my_vector getLosses(){
-		return neuron->getLosses();
-	} 
-	
 	~PY_MPL(){
 		delete neuron;
 		this->neuron = nullptr;
 	}
+
+
+	my_vector getLosses(){
+		return neuron->getLosses();
+	}
+
+	double getLR(){
+	    return neuron->getLR();
+	}
+
+	my_power getW(){
+        return neuron->getW();
+    }
+
+    std::vector<my_vector> getB(){
+        return neuron->getB();
+    }
+
+    std::vector<my_vector> getH(){
+        return neuron->getH();
+    }
+
+    int getEpoches(){
+        return neuron->getEpochs();
+    }
+
+
 };
 
 
