@@ -14,14 +14,19 @@ labels = {}
 historical = 8
 batch_size= 64
 n_train = 10 ## !!!!!!!!!!!!!!!!!!!!!
-input_size = 3
 hidden_size = 100
 output_size = 2
 loss = nn.MSELoss()
 num_epochs = 50
 total = 15
 losses = []
-header_list = ['point_victor']
+# model_m_8
+# header_list=[]
+#  add2
+# header_list = ['point_victor','game_victor','set_victor','p1_points_won', 'p2_points_won']
+# add3
+header_list = ['point_victor','game_victor','set_victor']
+input_size = 2+len(header_list)
 
 
 
@@ -74,6 +79,22 @@ class LSTMModel(nn.Module):
             print(f'loss: {l.item()}')
 
     def predict(self, test_features):
+        # self.eval()  # 设置模型为评估模式
+        # predictions = []  # 用于存储所有的预测值
+
+        # with torch.no_grad():  # 不计算梯度，减少计算和内存消耗
+        #     current_features = test_features
+        #     for _ in range(n_steps):
+        #         prediction = self(current_features)  # 进行一次预测
+        #          # 保存预测结果
+        #
+        #         # 将预测值添加到当前特征的末尾，并移除最前面的值以保持特征长度不变
+        #         # 假设 current_features 和 prediction 都是 [batch_size, feature_size] 的形状
+        #         # 这里假设沿着第二个维度（特征维度）进行操作
+        #         current_features = torch.cat((current_features[:, 1:,:], prediction), dim=1)
+        #
+        # self.train()  # 将模型设置回训练模式
+        # return prediction  # 返
         self.eval()
         with torch.no_grad():
             prediction = self(test_features)
@@ -108,26 +129,26 @@ def main():
     "=====================Train====================="
     # my_model = LSTMModel(input_size, hidden_size, output_size)
     # my_model.train_model(train_iter, loss, num_epochs, 0.01)
-    # torch.save(my_model.state_dict(), 'output/model_m_add2.pt')
+    # torch.save(my_model.state_dict(), 'output/model_m_8.pt')
 
     "=====================Load Model====================="
-    my_state = torch.load('output/model_m_add.pt')
+    my_state = torch.load('output/model_add3.pt')
     model = LSTMModel(input_size, hidden_size, output_size)
     model.load_state_dict(my_state)
 
     "=====================Test====================="
-    output_len = 10000
-    test_out = model.predict(test_features[:output_len])
-    test_loss = loss(test_out, test_labels[:output_len])
+    # output_len = 888
+    test_out = model.predict(test_features)
+    test_loss = loss(test_out, test_labels)
     print("Test Loss:", test_loss.item())
-    test_out = lm.inve_nor(test_out, min4, max4)
-    test_labels = lm.inve_nor(test_labels, min4, max4)
-    accuracy, precision, recall, f1 = model.judge(test_labels[:output_len], test_out)
+    # test_out = lm.inve_nor(test_out, min4, max4)
+    # test_labels = lm.inve_nor(test_labels, min4, max4)
+    accuracy, precision, recall, f1 = model.judge(test_labels, test_out)
     print('accuracy:', accuracy)
     print('precision:', precision)
     print('recall:', recall)
     print('f1:', f1)
-    savemat('output/test_out_m.mat', {'test_out': test_out,'test_labels':test_labels[:output_len]})
+    savemat('output/test_out_m.mat', {'test_out': test_out,'test_labels':test_labels})
 
 if __name__ == '__main__':
     main()
