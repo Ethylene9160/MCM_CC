@@ -1,54 +1,67 @@
 import numpy as np
 import pandas as pd
+
 import matplotlib.pyplot as plt
 
 import python.PCA as mPCA
-import python.SVM as mSVM
 import python.data_reader as mDR
 from python.data_reader import hint
 
-data_path = 'statics/hot_data.csv'
+data_path = 'statics/29splits/session1.csv'
 match_map = {}
 
-def read_data(csv_file_path):
-    # 从CSV文件中读取数据
-    data = pd.read_csv(csv_file_path)
-    return data
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
 
-def read_single_data(single_line):
-    # 将单行数据转换为字典
-    single_map = {}
-    for i, value in enumerate(single_line):
-        single_map[hint[i]] = value
-    #如果没有这个选手的数据，就添加进去
-    if single_line[0] not in match_map:
-        match_map[single_line[0]] = 1
-    return single_map
-
+def d_sigmoid(x):
+    x = sigmoid(x)
+    return x * (1 - x)  # sigmoid函数的导数
 
 if __name__ == '__main__':
     # 加载CSV数据
-    # data = read_data(data_path)
+    data = mDR.read_data(data_path)
     #
     # # 直接将DataFrame中的每行转换为字典并添加到playerList
-    # player_list = []
-    # for index, row in data.iterrows():
-    #     player_data = row.to_dict()
-    #     player_list.append(player_data)
+    player_list = []
+    for index, row in data.iterrows():
+        player_data = row.to_dict()
+        player_list.append(player_data)
+
     # print('match map:', match_map)
     # # 打印playerList中的前几个条目以进行验证
-    # for player in player_list[:2]:
-    #     print(player)
+    for player in player_list[:2]:
+        print(player)
     plist = mDR.getList(data_path)
     for player in plist[:2]:
         print(player)
     mPCA_test = mPCA.PCA()
-    mPCA_test.train(plist[1:100])
+    # 取出plist的第5列及以后的元素
+    plist = np.array(plist)
+    # print(plist.shape)
+    plist = plist[:, 5:]
+
+    mPCA_test.train(plist[1:2000,:])
     # out = mPCA_test.transform(plist, 8)
     mPCA_test.draw_variance_plot()
     mPCA_test.draw_split_variance_plot()
-    new_list = mPCA_test.transform(plist, 8)
-    reconstruct_list = mPCA_test.inverse_transform(new_list, 8)
+    # new_list = mPCA_test.transform(plist, 8)
+    principle = mPCA_test.transform(plist, 1)
+
+    # 映射为0-1分布
+    principle = (principle - np.min(principle)) / (np.max(principle) - np.min(principle))
+    # print(principle)
+    # plt.figure()
+    # plt.plot(principle)
+    # plt.show()
+
+    p1m, p2m = mDR.getMomentum(player_list)
+    # 在matlab中，绘制出momentum的两条曲线的变化啊趋势。
+    plt.figure()
+    plt.plot(p1m, label='p1')
+    plt.plot(p2m, label='p2')
+    # 标注哪根曲线是第一列，哪一根是第二列
+    plt.legend()
+    plt.show()
 
     # size = 0
     # cor = 0
