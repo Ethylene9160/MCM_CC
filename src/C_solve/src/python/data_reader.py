@@ -128,32 +128,32 @@ def getMots(single_map, lastP1, lastP2, p1_continue = 0, p2_continue = 0, p1_cou
     # w4 = 0
     l51 = single_map['p1_break_pt_won'] - single_map['p2_break_pt_won']
     l52 = single_map['p2_break_pt_won'] - single_map['p1_break_pt_won']
-    w5 = 0.2
-    # w5 = 0
+    w5 = 0.5
+    w5 = 0
     l61 = single_map['p1_break_pt_missed'] - single_map['p2_break_pt_missed']
     l62 = single_map['p2_break_pt_missed'] - single_map['p1_break_pt_missed']
-    w6 = -0.2
+    w6 = -0.5
     # w6 = 0
     l71 = single_map['p1_unf_err'] - single_map['p2_unf_err']
     l72 = single_map['p2_unf_err'] - single_map['p1_unf_err']
-    w7 = 0.2
+    w7 = 0.5
     # w7 = 0
 
-    l81 = single_map['p1_sets'] - single_map['p2_sets']
-    l82 = single_map['p2_sets'] - single_map['p1_sets']
-    w8 = 0.2
+    l81 = single_map['p1_sets']**2.5 - single_map['p2_sets']*2.5
+    l82 = -l81
+    w8 = 0.10
     # w8 = 0
-    l91 = single_map['p1_games']-single_map['p2_games']
-    l92 = single_map['p2_games']-single_map['p1_games']
-    w9 = 0.2
+    l91 = single_map['p1_games']**2-single_map['p2_games']**2
+    l92 = -l91
+    w9 = 0.3
     # w9 = 0
     l101 = single_map['p1_score']-single_map['p2_score']
     l102 = single_map['p2_score']-single_map['p1_score']
     w10 = 0.2
     # w10=0
     wc = 1.5
-    wcontinue = 0.55
-    fh = 0.5
+    wcontinue = 1.5
+    fh = 0.25
     bc = 1-fh
     p1 = w1*l11+w2*l21+w3*l31+w4*l41+w5*l51+w6*l61+w7*l71+w8*l81+w9*l91+w10*l101+wc*p1_count+wcontinue*p1_continue
     p2 = w1*l12+w2*l22+w3*l32+w4*l42+w5*l52+w6*l62+w7*l72+w8*l82+w9*l92+w10*l102+wc*p2_count+wcontinue*p2_continue
@@ -193,7 +193,7 @@ def getMomentum(whole_list):
                 p2_continue = time_count
                 p1_continue = 0
             p1_count = 0
-        p1, p2 = getMots(whole_list[i],p1,p2,tanh(p1_continue),tanh(p2_continue),sigmoid(p1_count-5),sigmoid(p2_count-5))
+        p1, p2 = getMots(whole_list[i],p1,p2,sigmoid(p1_continue-3),sigmoid(p2_continue-3),sigmoid(p1_count-5),sigmoid(p2_count-5))
         p1_monmentum_list.append(p1)
         p2_monmentum_list.append(p2)
     return p1_monmentum_list, p2_monmentum_list

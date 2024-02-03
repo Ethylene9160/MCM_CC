@@ -7,7 +7,7 @@ import python.PCA as mPCA
 import python.data_reader as mDR
 from python.data_reader import hint
 
-data_path = '../statics/29splits/session6.csv'
+data_path = '../statics/29splits/session22.csv'
 
 if __name__ == '__main__':
     # 加载CSV数据。这个函数在data_reader.py中定义
