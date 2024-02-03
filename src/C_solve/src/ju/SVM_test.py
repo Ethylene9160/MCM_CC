@@ -9,13 +9,13 @@ from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 
 import python.data_reader as mDR
-data_path = 'statics/29splits/session2.csv'
+data_path = '../statics/29splits/session2.csv'
 
 file_paths = [
-    'statics/29splits/session1.csv',
-    'statics/29splits/session2.csv',
-    'statics/29splits/session3.csv',
-    'statics/29splits/session4.csv'
+    '../statics/29splits/session1.csv',
+    '../statics/29splits/session2.csv',
+    '../statics/29splits/session3.csv',
+    '../statics/29splits/session4.csv'
 ]
 # 假设calculate_momentum是一个可用的函数，可以计算momentum
 # 从您的描述来看，这个函数可能需要根据实际情况进行调整或重写
@@ -107,7 +107,7 @@ def main():
     labels = combined_df['Player1_Momentum_shift_pre']
 
     # 读取测试集
-    test_df = pd.read_csv('statics/29splits/session5.csv')
+    test_df = pd.read_csv('../statics/29splits/session5.csv')
     # 对测试集同样做添加数据处理
     test_df = append_momentum(test_df)
 

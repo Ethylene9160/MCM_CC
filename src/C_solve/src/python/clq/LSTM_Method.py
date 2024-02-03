@@ -1,5 +1,6 @@
 import torch
-
+import python.data_reader as mDR
+from torch.utils.data import TensorDataset, DataLoader
 
 def slide_windows(data, historical, slide_step=1, in_start=0, n_out=1):
     # data: 输入的数据集，(N，dimension)
@@ -52,3 +53,58 @@ def ger_feature_label(data, historical,num_samples,match_num):
         features = torch.cat((features, new_features), dim=0)  # 连接起来
         labels = torch.cat((labels, new_labels), dim=0)
     return features, labels,seq_num
+
+def data_processing(n_train,historical,batch_size):
+    data = {}
+    features = {}  # 元素为list
+    labels = {}
+    for i in range(1, 16):
+        data_path = f'../../statics/29splits/session{i}.csv'
+        original_data = mDR.read_data(data_path)
+        player_list = []
+        for index, row in original_data.iterrows():
+            player_data = row.to_dict()
+            player_list.append(player_data)
+        # 计算两者的momentum趋势。
+        # 这个函数在data_reader.py中定义
+        # getMonmentum函数返回两个列表，分别代表两个选手的momentum趋势。
+        # 传入的参数是包含对手对战的字典信息的列表。
+        p1m, p2m = mDR.getMomentum(player_list)
+        p1m = torch.tensor(p1m).view(-1, 1)
+        p2m = torch.tensor(p2m).view(-1, 1)
+        pm = torch.cat((p1m, p2m), dim=1)
+        if i not in data:
+            data[i] = []
+        data[i].append(pm)
+    for i in range(1, len(data) + 1):
+        if i not in features:
+            features[i] = []
+            labels[i] = []
+        # print(f"1:{i}")
+        feature, label, seq = slide_windows(data[i][0], historical)
+        # print(f"2:{i}")
+        features[i].append(feature)
+        labels[i].append(label)
+        features[i] = torch.cat(features[i], dim=0)
+        labels[i] = torch.cat(labels[i], dim=0)
+
+        # print(features)
+    train_features = features[1]
+    train_labels = labels[1]
+    test_features = features[n_train]
+    test_labels = labels[n_train]
+    for i in range(2, n_train):
+        train_features = torch.cat((train_features, features[i]), dim=0)
+        train_labels = torch.cat((train_labels, labels[i]), dim=0)
+    for i in range(n_train + 1, len(data) + 1):
+        test_features = torch.cat((test_features, features[i]), dim=0)
+        test_labels = torch.cat((test_labels, labels[i]), dim=0)
+
+    train_features, min1, max1 = nor_maxmin(train_features)
+    train_labels, min2, max2 = nor_maxmin(train_labels)
+    test_features, min3, max3 = nor_maxmin(test_features)
+    test_labels, min4, max4 = nor_maxmin(test_labels)
+
+    dataset = TensorDataset(train_features, train_labels)
+    train_iter = DataLoader(dataset, batch_size, shuffle=True)
+    return train_iter, test_features, test_labels, min1, max1, min2, max2, min3, max3, min4, max4
