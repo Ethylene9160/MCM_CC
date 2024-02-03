@@ -13,25 +13,61 @@ class MCModel:
         pass
 
     def MSELoss(self, y, y_pred):
+        if not isinstance(y, np.ndarray):
+            y = np.array(y)
+        if not isinstance(y_pred, np.ndarray):
+            y_pred = np.array(y_pred)
         return np.mean(np.square(y - y_pred))
 
-    def accuracy(self, y, y_pred):
-        return np.mean(np.equal(y, y_pred))
+    # def accuracy(self, y, y_pred):
+    #     if not isinstance(y, np.ndarray):
+    #         y = np.array(y)
+    #     if not isinstance(y_pred, np.ndarray):
+    #         y_pred = np.array(y_pred)
+    #     return np.mean(np.equal(y, y_pred))
+    #
+    # def F1_score(self, y, y_pred):
+    #     if not isinstance(y, np.ndarray):
+    #         y = np.array(y)
+    #     if not isinstance(y_pred, np.ndarray):
+    #         y_pred = np.array(y_pred)
+    #     TP = np.sum(np.logical_and(y_pred == 1, y == 1))
+    #     FP = np.sum(np.logical_and(y_pred == 1, y == 0))
+    #     FN = np.sum(np.logical_and(y_pred == 0, y == 1))
+    #     precision = TP / (TP + FP)
+    #     recall = TP / (TP + FN)
+    #     return 2 * precision * recall / (precision + recall)
+    #
+    # def precision(self, y, y_pred):
+    #     if not isinstance(y, np.ndarray):
+    #         y = np.array(y)
+    #     if not isinstance(y_pred, np.ndarray):
+    #         y_pred = np.array(y_pred)
+    #     TP = np.sum(np.logical_and(y_pred == 1, y == 1))
+    #     FP = np.sum(np.logical_and(y_pred == 1, y == 0))
+    #     return TP / (TP + FP)
+    #
+    # def recall(self, y, y_pred):
+    #     if not isinstance(y, np.ndarray):
+    #         y = np.array(y)
+    #     if not isinstance(y_pred, np.ndarray):
+    #         y_pred = np.array(y_pred)
+    #     TP = np.sum(np.logical_and(y_pred == 1, y == 1))
+    #     FN = np.sum(np.logical_and(y_pred == 0, y == 1))
+    #     return TP / (TP + FN)
 
-    def F1_score(self, y, y_pred):
+    def judge(self, y, y_pred):
+        if not isinstance(y, np.ndarray):
+            y = np.array(y)
+        y = (y>0.5).astype(int)
+        if not isinstance(y_pred, np.ndarray):
+            y_pred = np.array(y_pred)
+        y_pred = (y_pred>0.5).astype(int)
         TP = np.sum(np.logical_and(y_pred == 1, y == 1))
         FP = np.sum(np.logical_and(y_pred == 1, y == 0))
         FN = np.sum(np.logical_and(y_pred == 0, y == 1))
+        accuracy = np.mean(np.equal(y, y_pred))
         precision = TP / (TP + FP)
         recall = TP / (TP + FN)
-        return 2 * precision * recall / (precision + recall)
-
-    def precision(self, y, y_pred):
-        TP = np.sum(np.logical_and(y_pred == 1, y == 1))
-        FP = np.sum(np.logical_and(y_pred == 1, y == 0))
-        return TP / (TP + FP)
-
-    def recall(self, y, y_pred):
-        TP = np.sum(np.logical_and(y_pred == 1, y == 1))
-        FN = np.sum(np.logical_and(y_pred == 0, y == 1))
-        return TP / (TP + FN)
+        f1 = 2 * precision * recall / (precision + recall)
+        return accuracy, precision, recall, f1
