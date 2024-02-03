@@ -111,6 +111,7 @@ if __name__ == '__main__':
                             'p1_sets', 'p2_sets', \
                             'p1_games', 'p2_games', \
                             'p1_score', 'p2_score', \
+
                             'p1_winner', 'p1_ace'
     ]
     train_player_list = mDR.getList('../../statics/training/session_train.csv')
@@ -119,7 +120,7 @@ if __name__ == '__main__':
     p1m, p2m = mDR.getMomentum(train_player_list)
     X_test, y_test = mDR.getXY(test_player_list, keys, 5)
 
-    model = MCMMLP(epoches=8000, lr=0.0003, inputSize=len(X_test[0]), hidden_layer_sizes=[9,9])
+    model = MCMMLP(epoches=1000, lr=0.0005, inputSize=len(X_test[0]), hidden_layer_sizes=[3,8,4])
     print('MLP start training!')
     # print(len(X_train))
     # print(len(y_train))
@@ -131,11 +132,10 @@ if __name__ == '__main__':
     plt.plot(y_test, label='true')
     plt.legend()
     plt.show()
-
-    print('R^2 Score:', model.r2(y_test, y_pred))
     print('MSEloss:', model.MSELoss(y_test, y_pred))
     accuracy, precision, recall, f1 = model.judge(y_test, y_pred)
     print('accuracy:', accuracy)
     print('precision:', precision)
     print('recall:', recall)
     print('f1:', f1)
+    model.save('../model_params/model.pkl')

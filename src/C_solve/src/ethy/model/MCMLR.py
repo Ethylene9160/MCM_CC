@@ -92,10 +92,11 @@ class MCMLR(MCModel):
 
 def LR_main():
     model = MCMLR()
+    model = model.load('../model_params/lr_model.pkl')
     X_train, y_train = LR_data_process(['../../statics/training/session_train.csv'], 5)
     X_test, y_test = LR_data_process(['../../statics/training/session_test.csv'], 5)
 
-    model.train(X_train, y_train)
+    # model.train(X_train, y_train)
     predictions = model.predict(X_test)
     r2 = r2_score(y_test, predictions)
     print(f'R^2 Score: {r2}')
@@ -104,8 +105,8 @@ def LR_main():
     # evs = explained_variance_score(y_test, predictions)
     # print(f'Explained Variance Score: {evs}')
     plt.figure()
-    plt.plot(y_test, label='True')
     plt.plot(predictions, label='Predict')
+    plt.plot(y_test, label='True')
     plt.legend()
     plt.show()
     print('R^2 Score:', model.r2(y_test, predictions))
@@ -115,6 +116,7 @@ def LR_main():
     print('precision:', precision)
     print('recall:', recall)
     print('f1:', f1)
+    # model.save('../model_params/lr_model.pkl')
 
 if __name__ == '__main__':
     LR_main()
