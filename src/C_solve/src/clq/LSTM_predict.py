@@ -21,6 +21,7 @@ loss = nn.MSELoss()
 num_epochs = 50
 total = 15
 losses = []
+header_list = ['point_victor']
 
 
 
@@ -103,11 +104,11 @@ class LSTMModel(nn.Module):
         return accuracy, precision, recall, f1
 def main():
     "=====================Data Processing====================="
-    train_iter, test_features, test_labels, min1, max1, min2, max2, min3, max3, min4, max4 = lm.data_processing(n_train,historical,batch_size,total)
+    train_iter, test_features, test_labels, min1, max1, min2, max2, min3, max3, min4, max4 = lm.data_processing(n_train,historical,batch_size,total,header_list)
     "=====================Train====================="
-    my_model = LSTMModel(input_size, hidden_size, output_size)
-    my_model.train_model(train_iter, loss, num_epochs, 0.01)
-    torch.save(my_model.state_dict(), 'output/model_m_add.pt')
+    # my_model = LSTMModel(input_size, hidden_size, output_size)
+    # my_model.train_model(train_iter, loss, num_epochs, 0.01)
+    # torch.save(my_model.state_dict(), 'output/model_m_add2.pt')
 
     "=====================Load Model====================="
     my_state = torch.load('output/model_m_add.pt')
@@ -115,7 +116,7 @@ def main():
     model.load_state_dict(my_state)
 
     "=====================Test====================="
-    output_len = 200
+    output_len = 10000
     test_out = model.predict(test_features[:output_len])
     test_loss = loss(test_out, test_labels[:output_len])
     print("Test Loss:", test_loss.item())

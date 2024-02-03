@@ -12,7 +12,7 @@ def slide_windows(data, historical, slide_step=1, in_start=0, n_out=1):
     dimension = data.size(1)
     seq_num = (N - historical // slide_step)  # 运用滑动窗口方法，把长度为N的序列分成seq_num个长度为time_step的序列
     features = torch.zeros(seq_num, historical, dimension)  # 新建features shape = (seq_num,time_step,2)
-    labels = torch.zeros(seq_num, 1, dimension)
+    labels = torch.zeros(seq_num, 1, 2)
     for i in range(N):
         in_end = in_start + historical
         out_end = in_end + n_out
@@ -21,7 +21,7 @@ def slide_windows(data, historical, slide_step=1, in_start=0, n_out=1):
         if out_end <= N:
             # 训练数据以滑动步长slide_step截取
             features[i, :, :] = data[in_start:in_end]
-            labels[i, :, :] = data[in_end].unsqueeze(0)
+            labels[i, :, :] = data[in_end,:2].unsqueeze(0)
             # features[i, :, :] = data[in_start:in_end, :]
             # # 计算当前时刻与下一时刻的差值
             # labels[i, :, :] = data[in_end:out_end, :] - data[in_end - 1:in_end, :]
@@ -63,7 +63,7 @@ def get_data(player_list,header):
         return_data.append(player_list[i][f'{header}'])
     return return_data
 
-def data_processing(n_train,historical,batch_size,total):
+def data_processing(n_train,historical,batch_size,total,header_list):
     data = {}
     features = {}  # 元素为list
     labels = {}
@@ -79,11 +79,15 @@ def data_processing(n_train,historical,batch_size,total):
         # getMonmentum函数返回两个列表，分别代表两个选手的momentum趋势。
         # 传入的参数是包含对手对战的字典信息的列表。
         p1m, p2m = mDR.getMomentum(player_list)
-        winner = get_data(player_list, 'point_victor')
+        # winner = get_data(player_list, 'point_victor')
         p1m = torch.tensor(p1m).view(-1, 1)
         p2m = torch.tensor(p2m).view(-1, 1)
-        winner = torch.tensor(winner).view(-1, 1)
-        pm = torch.cat((p1m, p2m,winner), dim=1)
+        pm = torch.cat((p1m, p2m), dim=1)
+        # winner = torch.tensor(winner).view(-1, 1)
+        for header in header_list:
+            p = get_data(player_list, header)
+            p = torch.tensor(p).view(-1, 1)
+            pm = torch.cat((pm,p), dim=1)
         if i not in data:
             data[i] = []
         data[i].append(pm)
