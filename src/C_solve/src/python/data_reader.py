@@ -80,10 +80,11 @@ def getList(data_path):
     data = read_data(data_path)
 
     # 直接将DataFrame中的每行转换为字典并添加到playerList
-    data_list = []
+    player_list = []
     for index, row in data.iterrows():
-        data_list.append(line_to_data(row))
-    return data_list
+        player_data = row.to_dict()
+        player_list.append(player_data)
+    return player_list
 
 def getExcelList(data_path):
     # 加载excel数据
@@ -231,4 +232,24 @@ def getP1P2Sets(wholeMap, p1_index, p2_index):
         p1_list.append(single_map[p1_index])
         p2_list.append(single_map[p2_index])
     return p1_list, p2_list
+
+def getXY(player_list, keys, max_index):
+    X = []
+
+    # player_list = getList(filepath)
+    p1m, p2m = getMomentum(player_list)
+    y = p1m
+    for i in range(len(player_list)):
+        singleX = []
+        for key in keys:
+            singleX.append(player_list[i][key])
+        for j in range(1, max_index):
+            mat_index = i - j
+            if mat_index < 0:
+                singleX.append(0)
+            else:
+                singleX.append(p1m[mat_index])
+        X.append(singleX)
+
+    return X, y
 
