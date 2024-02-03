@@ -109,6 +109,7 @@ def LR_main():
     plt.plot(predictions, label='Predict')
     plt.legend()
     plt.show()
+    print('R^2 Score:', model.r2(y_test, predictions))
     print('loss:', model.MSELoss(y_test, predictions))
     accuracy, precision, recall, f1 = model.judge(y_test, predictions)
     print('accuracy:', accuracy)

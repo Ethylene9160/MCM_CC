@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.metrics import r2_score
 class MCModel:
     def __init__(self):
         pass
@@ -18,6 +19,13 @@ class MCModel:
         if not isinstance(y_pred, np.ndarray):
             y_pred = np.array(y_pred)
         return np.mean(np.square(y - y_pred))
+
+    def r2(self, y, y_pred):
+        if not isinstance(y, np.ndarray):
+            y = np.array(y)
+        if not isinstance(y_pred, np.ndarray):
+            y_pred = np.array(y_pred)
+        return r2_score(y, y_pred)
 
     def judge(self, y, y_pred):
         if not isinstance(y, np.ndarray):
