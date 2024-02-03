@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data import TensorDataset, DataLoader
 from scipy.io import savemat
 import LSTM_Method
+import python.data_reader as mDR
 import pandas as pd
 
 data_path = '../statics/29splits/session1.csv'
@@ -13,7 +14,7 @@ features = {}  # 元素为list
 labels = {}
 historical = 5
 batch_size= 64
-n_train = 10
+n_train = 3 ## !!!!!!!!!!!!!!!!!!!!!
 input_size = 2
 hidden_size = 100
 output_size = 2
@@ -28,18 +29,33 @@ losses = []
 
 
 try:
-    original_data = pd.read_csv(data_path)
-    for index, row in original_data.iterrows():
-        match_id = int(row['Q1-match_id'])
-        if match_id not in data:
-            data[match_id] = []
-        data[match_id].append([int(row['Q17-p1_points_won']), int(row['Q18-p2_points_won'])])
-    length = 0
+    for i in range(1, 6):
+        data_path = f'../../statics/29splits/session{i}.csv'
+        original_data = mDR.read_data(data_path)
+        # 读取数据，存储在player_list中。
+        # player_list是一个列表，其中每个元素都是一个字典，代表一个选手的数据。
+        player_list = []
+        for index, row in original_data.iterrows():
+            player_data = row.to_dict()
+            player_list.append(player_data)
+        # 计算两者的momentum趋势。
+        # 这个函数在data_reader.py中定义
+        # getMonmentum函数返回两个列表，分别代表两个选手的momentum趋势。
+        # 传入的参数是包含对手对战的字典信息的列表。
+        p1m, p2m = mDR.getMomentum(player_list)
+        p1m = torch.tensor(p1m).view(-1,1)
+        p2m = torch.tensor(p2m).view(-1,1)
+        pm = torch.cat((p1m,p2m),dim=1)
+        if i not in data:
+            data[i] = []
+        data[i].append(pm)
     for i in range(1,len(data)+1):
         if i not in features:
             features[i] = []
             labels[i] = []
-        feature, label,seq = LSTM_Method.slide_windows(torch.tensor(data[i]), historical)
+        # print(f"1:{i}")
+        feature, label,seq = LSTM_Method.slide_windows(data[i][0], historical)
+        # print(f"2:{i}")
         features[i].append(feature)
         labels[i].append(label)
         features[i] = torch.cat(features[i], dim=0)
@@ -103,11 +119,11 @@ try:
             print(f'loss: {l.item()}')
 
     #
-    # my_model = LSTMModel(input_size, hidden_size, output_size)
-    # train(my_model, train_iter, loss, num_epochs, 0.01)
-    # torch.save(my_model.state_dict(), 'model.pt')
+    my_model = LSTMModel(input_size, hidden_size, output_size)
+    train(my_model, train_iter, loss, num_epochs, 0.01)
+    torch.save(my_model.state_dict(), 'model_m.pt')
 
-    my_state = torch.load('model.pt')
+    my_state = torch.load('model_m.pt')
     model = LSTMModel(input_size, hidden_size, output_size)
     model.load_state_dict(my_state)
 
@@ -119,7 +135,7 @@ try:
 
     test_out = LSTM_Method.inve_nor(test_out, min4, max4)
     test_labels = LSTM_Method.inve_nor(test_labels, min4, max4)
-    savemat('test_out.mat', {'test_out': test_out,'test_labels':test_labels[:1000]})
+    savemat('test_out_m.mat', {'test_out': test_out,'test_labels':test_labels[:1000]})
     # print(test_out, test_labels)
     # test_features = LSTM_Method.inve_nor(test_features, min3, max3)
 except Exception as e:
