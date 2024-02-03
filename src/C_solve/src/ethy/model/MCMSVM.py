@@ -95,6 +95,10 @@ def SVM_main():
     plt.show()
 
     print('loss:', model.MSELoss(y_test, predictions))
+    print('accuracy:', model.accuracy(y_test, predictions))
+    print('precision:', model.precision(y_test, predictions))
+    print('recall:', model.recall(y_test, predictions))
+    print('f1:', model.F1_score(y_test, predictions))
 
 if __name__ == '__main__':
     SVM_main()

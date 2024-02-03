@@ -30,3 +30,8 @@ class MCModel:
         TP = np.sum(np.logical_and(y_pred == 1, y == 1))
         FP = np.sum(np.logical_and(y_pred == 1, y == 0))
         return TP / (TP + FP)
+
+    def recall(self, y, y_pred):
+        TP = np.sum(np.logical_and(y_pred == 1, y == 1))
+        FN = np.sum(np.logical_and(y_pred == 0, y == 1))
+        return TP / (TP + FN)
