@@ -1,7 +1,8 @@
 import numpy as np
+import pickle
 class MCModel:
     def __init__(self):
-        pass
+        self.model = None
 
     def train(self, X, y):
         pass
@@ -18,6 +19,14 @@ class MCModel:
         if not isinstance(y_pred, np.ndarray):
             y_pred = np.array(y_pred)
         return np.mean(np.square(y - y_pred))
+
+    def save(self, path):
+        with open(path, 'wb') as f:
+            pickle.dump(self, f)
+
+    def load(self, path):
+        with open(path, 'rb') as f:
+            return pickle.load(f)
 
     def judge(self, y, y_pred):
         if not isinstance(y, np.ndarray):
