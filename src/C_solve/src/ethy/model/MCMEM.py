@@ -123,7 +123,7 @@ class MCMEM(MCModel):
         self.w_mlp = self._judgement(self.mlp_model, self.y_test_ethy, self.mlp_pred)
         self.w_lr = self._judgement(self.lr_model, self.y_test_ju, self.lr_pred)
         self.w_lstm = self._judgement(self.lst_model, self.y_test_cai, self.lstm_pred)
-        self.w_svm/=1.11
+
         whole = np.exp(self.w_svm)+np.exp(self.w_mlp)+np.exp(self.w_lr)+np.exp(self.w_lstm)
         self.w_svm = np.exp(self.w_svm)/whole
         self.w_mlp = np.exp(self.w_mlp)/whole
@@ -169,7 +169,7 @@ if __name__ == '__main__':
     X_test_ju, y_test_ju = SVM_data_process(['../../statics/training/session_test.csv'], 5)
     mcmem_model = MCMEM()
     mcmem_model.train(maxShift=5)
-    mcmem_model = mcmem_model.load('../../ethy/model_params/em_model.pkl')
+    # mcmem_model = mcmem_model.load('../../ethy/model_params/em_model.pkl')
     predictions = mcmem_model.predict(X_test_ju)
     loss = mcmem_model.MSELoss(y_test_ju, predictions)
     print(f'Loss: {loss}')
@@ -190,7 +190,7 @@ if __name__ == '__main__':
     plt.legend()
     plt.show()
 
-    # mcmem_model.save('../../ethy/model_params/em_model.pkl')
+    mcmem_model.save('../../ethy/model_params/em_model.pkl')
 
 
 

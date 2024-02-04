@@ -65,7 +65,10 @@ class MSMSVM(MCModel):
     def __init__(self):
         # 训练SVM模型
         super().__init__()
-        self.svm_model = SVR()
+        # self.svm_model = SVR()
+        self.svm_model = SVR(kernel='rbf', C=1, epsilon=0.001)
+        # self.svm_model = SVR(kernel = 'poly', degree = 3)
+        # self.svm_model = SVR(kernel='linear')
 
     def train(self, X, y):
         self.svm_model.fit(X, y)
@@ -78,13 +81,12 @@ class MSMSVM(MCModel):
 
 def SVM_main():
     # 使用方法：
-    model = MCModel()
+    model = MSMSVM()
     # 读取数据
     X_train, y_train = SVM_data_process(['../../statics/training/session_train.csv'], 5)
     X_test, y_test = SVM_data_process(['../../statics/training/session_test.csv'], 5)
 
-    # model.train(X_train, y_train)
-    model = model.load('../model_params/svm_model.pkl')
+    model.train(X_train, y_train)
     predictions = model.predict(X_test)
     r2 = r2_score(y_test, predictions)
     print(f'R^2 Score: {r2}')
@@ -101,7 +103,8 @@ def SVM_main():
     print('precision:', precision)
     print('recall:', recall)
     print('f1:', f1)
-    # model.save('../model_params/svm_model.pkl')
+
+    model.save('../model_params/SVM_Model.pkl')  # 传入文件路径进行保存
 
 if __name__ == '__main__':
     SVM_main()

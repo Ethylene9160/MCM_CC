@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
     print('SVM results:')
     w_svm = visulaze_judgement(svm_model, y_test_ju, svm_pred)
-    w_svm /=1.2
+
     print('MLP results:')
     w_mlp = visulaze_judgement(mlp_model, y_test_ethy, mlp_pred)
 
@@ -137,6 +137,27 @@ if __name__ == '__main__':
     plt.plot(y_test_ju, label='True')
     plt.plot(prediction, label='Final Predict')
     plt.legend()
+    plt.show()
+
+    digit_test = (y_test_ju>0.5).astype(int)
+    digit_pred = (np.array(prediction)>0.5).astype(int)
+    plt.figure(figsize=(8, 5))
+    plt.plot(digit_test, label='True')
+    plt.plot(digit_pred, label='Final Predict')
+    plt.legend()
+    plt.show()
+
+
+    plt.figure(figsize=(8, 5))
+    t = np.arange(0, len(digit_test), 1)
+    out = np.zeros(len(digit_test))
+    for i in range(len(digit_test)):
+        if digit_test[i] == digit_pred[i]:
+            out[i] = 1
+        else:
+            out[i] = 0
+    colors_digit = ['red' if i == 0 else 'green' for i in out]
+    plt.scatter(t,np.ones(len(digit_test)), c=colors_digit, s=10, alpha=0.5)
     plt.show()
 
 
