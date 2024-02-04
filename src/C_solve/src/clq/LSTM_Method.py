@@ -10,12 +10,18 @@ def slide_windows(data, historical, slide_step=1, in_start=0, n_out=1):
     # in_start: 从第一个数据点开始取
     N = data.size(0)
     dimension = data.size(1)
-    seq_num = (N - historical // slide_step)  # 运用滑动窗口方法，把长度为N的序列分成seq_num个长度为time_step的序列
-    features = torch.zeros(seq_num, historical, dimension)  # 新建features shape = (seq_num,time_step,2)
-    labels = torch.zeros(seq_num, 1, 2)
-    for i in range(N):
+    # seq_num = (N - historical // slide_step)  # 运用滑动窗口方法，把长度为N的序列分成seq_num个长度为time_step的序列
+    features = torch.zeros(N, historical, dimension)  # 新建features shape = (seq_num,time_step,2)
+    labels = torch.zeros(N, 1, 2)
+    for i in range(historical):
+        a = torch.cat((torch.zeros(historical-i, dimension), data[:i,:]), dim=0)
+        # print(a)
+        features[i, :, :] = torch.cat((torch.zeros(historical-i, dimension), data[:i,:]), dim=0)
+        labels[i, :, :] = data[i,:2].unsqueeze(0)
+    for i in range(historical,N):
         in_end = in_start + historical
         out_end = in_end + n_out
+        # print(in_end)
 
         # 保证截取样本完整，最大元素索引不超过原序列索引，则截取数据；否则丢弃该样本
         if out_end <= N:
@@ -26,7 +32,7 @@ def slide_windows(data, historical, slide_step=1, in_start=0, n_out=1):
             # # 计算当前时刻与下一时刻的差值
             # labels[i, :, :] = data[in_end:out_end, :] - data[in_end - 1:in_end, :]
         in_start += slide_step  # 滑动步长为slide_step，即往前移一步
-    return features, labels, seq_num
+    return features, labels
 
 
 ## 归一化
@@ -49,13 +55,13 @@ def inve_nor(my_tensor, min,max):
 
 
 def ger_feature_label(data, historical,num_samples,match_num):
-    features, labels, seq_num = slide_windows(data[:num_samples], historical)  # 先生成第一条轨迹的features,labels
+    features, labels = slide_windows(data[:num_samples], historical)  # 先生成第一条轨迹的features,labels
     for i in range(1, match_num):
-        new_features, new_labels, _ = slide_windows(data[i * num_samples:(i + 1) * num_samples],
+        new_features, new_labels= slide_windows(data[i * num_samples:(i + 1) * num_samples],
                                                     historical)  # 每一条轨迹生成相应的features,labels  (序列总数,time_step,2),(序列总数,1,2)
         features = torch.cat((features, new_features), dim=0)  # 连接起来
         labels = torch.cat((labels, new_labels), dim=0)
-    return features, labels,seq_num
+    return features, labels
 
 def get_data(player_list,header):
     return_data = []
@@ -96,13 +102,20 @@ def data_processing(n_train,historical,batch_size,total,header_list):
             features[i] = []
             labels[i] = []
         # print(f"1:{i}")
-        feature, label, seq = slide_windows(data[i][0], historical)
+        feature, label = slide_windows(data[i][0], historical)
         # print(f"2:{i}")
         features[i].append(feature)
         labels[i].append(label)
         features[i] = torch.cat(features[i], dim=0)
         labels[i] = torch.cat(labels[i], dim=0)
 
+    # a = 200
+    # print(data[1][0][8+a])
+    # # # print(features[1][:7])
+    # print(labels[1][0+a])
+
+
+    """===============分割测试集和数据集======================"""
         # print(features)
     train_features = features[1]
     train_labels = labels[1]
@@ -111,7 +124,7 @@ def data_processing(n_train,historical,batch_size,total,header_list):
     for i in range(2, n_train):
         train_features = torch.cat((train_features, features[i]), dim=0)
         train_labels = torch.cat((train_labels, labels[i]), dim=0)
-    for i in range(n_train + 1, len(data) + 1):
+    for i in range(n_train + 1, len(data)):
         test_features = torch.cat((test_features, features[i]), dim=0)
         test_labels = torch.cat((test_labels, labels[i]), dim=0)
 
