@@ -124,7 +124,7 @@ def data_processing(n_train,historical,batch_size,total,header_list):
     for i in range(2, n_train):
         train_features = torch.cat((train_features, features[i]), dim=0)
         train_labels = torch.cat((train_labels, labels[i]), dim=0)
-    for i in range(n_train + 1, len(data)):
+    for i in range(n_train + 1, len(data)+1):
         test_features = torch.cat((test_features, features[i]), dim=0)
         test_labels = torch.cat((test_labels, labels[i]), dim=0)
 

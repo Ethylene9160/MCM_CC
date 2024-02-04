@@ -13,7 +13,7 @@ features = {}  # 元素为list
 labels = {}
 historical = 8
 batch_size= 64
-n_train = 10 ## !!!!!!!!!!!!!!!!!!!!!
+n_train = 11 ## !!!!!!!!!!!!!!!!!!!!!
 hidden_size = 100
 output_size = 2
 loss = nn.MSELoss()
@@ -127,9 +127,9 @@ def main():
     "=====================Data Processing====================="
     train_iter, test_features, test_labels, min1, max1, min2, max2, min3, max3, min4, max4 = lm.data_processing(n_train,historical,batch_size,total,header_list)
     "=====================Train====================="
-    my_model = LSTMModel(input_size, hidden_size, output_size)
-    my_model.train_model(train_iter, loss, num_epochs, 0.01)
-    torch.save(my_model.state_dict(), 'output/model_whole.pt')
+    # my_model = LSTMModel(input_size, hidden_size, output_size)
+    # my_model.train_model(train_iter, loss, num_epochs, 0.01)
+    # torch.save(my_model.state_dict(), 'output/model_whole.pt')
 
     "=====================Load Model====================="
     my_state = torch.load('output/model_whole.pt')
@@ -149,6 +149,10 @@ def main():
     print('recall:', recall)
     print('f1:', f1)
     test = test_out
+    import matplotlib.pyplot as plt
+    plt.figure()
+    plt.plot(test_out[:,0,0].reshape(-1,1), label='Predict')
+    plt.show()
 
     savemat('output/test_out_m.mat', {'test_out': test_out,'test_labels':test_labels})
 
