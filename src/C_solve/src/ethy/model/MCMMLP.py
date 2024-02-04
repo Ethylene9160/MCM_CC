@@ -228,7 +228,7 @@ if __name__ == '__main__':
     p1m, p2m = mDR.getMomentum(train_player_list)
     X_test, y_test = mDR.getXY(test_player_list, keys, 5)
 
-    model = MCMMLP(epoches=20000, lr=0.00035, inputSize=len(X_test[0]), hidden_layer_sizes=[10, 8])
+    model = MCMMLP(epoches=50000, lr=0.00035, inputSize=len(X_test[0]), hidden_layer_sizes=[10, 9])
     model.setLR_VOKE(200)
     print('MLP start training!')
 
