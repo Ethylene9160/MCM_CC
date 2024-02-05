@@ -51,11 +51,11 @@ def z_score(sequence):
 
 
 '''计算每一轮出错率'''
-def error_rate(player_list):
-    df = get_data(player_list,'p1_double_fault')
-    uf = get_data(player_list,'p1_unf_err')
-    net =  get_data(player_list,'p1_net_pt')
-    pm = get_data(player_list,'p1_break_pt_missed')
+def error_rate(player_list,i):
+    df = get_data(player_list,f'p{i}_double_fault')
+    uf = get_data(player_list,f'p{i}_unf_err')
+    net =  get_data(player_list,f'p{i}_net_pt')
+    pm = get_data(player_list,f'p{i}_break_pt_missed')
     error = [df,uf,net,pm]
     error = np.array(error)
     err = []
@@ -67,16 +67,28 @@ def error_rate(player_list):
             err.append(0)
     return err
 
+def get_error_sum(player_list,i):
+    df = get_data(player_list,f'p{i}_double_fault')
+    uf = get_data(player_list,f'p{i}_unf_err')
+    net =  get_data(player_list,f'p{i}_net_pt')
+    pm = get_data(player_list,f'p{i}_break_pt_missed')
+    error = [df,uf,net,pm]
+    error = np.array(error)
+    err = []
+    for i in range(len(error[1])):
+        esum = np.sum(error[:,:i])
+        err.append(esum)
+    return err
 def get_server(player_list):
     serve = get_data(player_list,'server')
     serve = [1 if x == 1 else 0 for x in serve]
     return serve
 
-def get_surprise(player_list):
-    pw = get_data(player_list,'p1_winner')
-    npw = get_data(player_list,'p1_net_pt_won')
-    bp = get_data(player_list,'p1_break_pt')
-    bpw = get_data(player_list,'p1_break_pt_won')
+def get_surprise(player_list,i):
+    pw = get_data(player_list,f'p{i}_winner')
+    npw = get_data(player_list,f'p{i}_net_pt_won')
+    bp = get_data(player_list,f'p{i}_break_pt')
+    bpw = get_data(player_list,f'p{i}_break_pt_won')
     sur = [pw,npw,bp,bpw]
     sur = np.array(sur)
     surprise = []
@@ -87,3 +99,30 @@ def get_surprise(player_list):
         else:
             surprise.append(0)
     return surprise
+
+def get_surprise_sum(player_list,i):
+    pw = get_data(player_list,f'p{i}_winner')
+    npw = get_data(player_list,f'p{i}_net_pt_won')
+    bp = get_data(player_list,f'p{i}_break_pt')
+    bpw = get_data(player_list,f'p{i}_break_pt_won')
+    sur = [pw,npw,bp,bpw]
+    sur = np.array(sur)
+    surprise = []
+    for i in range(len(sur[1])):
+        sur_sum = np.sum(sur[:,:i])
+        surprise.append(sur_sum)
+    return surprise
+
+def get_server_change(player_list,i):
+    serve = get_data(player_list,'server')
+    serve = [1 if x == i else 0 for x in serve]
+    change = [serve[0]-1]
+    for i in range(1,len(serve)):
+        if serve[i] == 0:
+            change.append(-1)
+        else:
+            if serve[i] == serve[i-1]:
+                change.append(-1)
+            else:
+                change.append(0)
+    return change
