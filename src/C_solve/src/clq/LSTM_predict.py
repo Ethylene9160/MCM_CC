@@ -7,6 +7,7 @@ from scipy.io import savemat
 import LSTM_Method as lm
 import python.data_reader as mDR
 import pandas as pd
+from ethy.model.MCModel import MCModel
 
 data = {}
 features = {}  # 元素为list
@@ -48,7 +49,7 @@ class AttentionLayer(nn.Module):
         # context_vector: (batch_size, hidden_size)
         return context_vector
 
-class LSTMModel(nn.Module):
+class LSTMModel(nn.Module,MCModel):
     def __init__(self, input_size, hidden_size, output_size):
         super(LSTMModel, self).__init__()
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers=4, batch_first=True, bidirectional=True)
@@ -101,28 +102,6 @@ class LSTMModel(nn.Module):
         self.train()
         return prediction
 
-    def MSELoss(self, y, y_pred):
-        if not isinstance(y, np.ndarray):
-            y = np.array(y)
-        if not isinstance(y_pred, np.ndarray):
-            y_pred = np.array(y_pred)
-        return np.mean(np.square(y - y_pred))
-
-    def judge(self, y, y_pred):
-        if not isinstance(y, np.ndarray):
-            y = np.array(y)
-        y = (y>0.5).astype(int)
-        if not isinstance(y_pred, np.ndarray):
-            y_pred = np.array(y_pred)
-        y_pred = (y_pred>0.5).astype(int)
-        TP = np.sum(np.logical_and(y_pred == 1, y == 1))
-        FP = np.sum(np.logical_and(y_pred == 1, y == 0))
-        FN = np.sum(np.logical_and(y_pred == 0, y == 1))
-        accuracy = np.mean(np.equal(y, y_pred))
-        precision = TP / (TP + FP)
-        recall = TP / (TP + FN)
-        f1 = 2 * precision * recall / (precision + recall)
-        return accuracy, precision, recall, f1
 def main():
     "=====================Data Processing====================="
     train_iter, test_features, test_labels, min1, max1, min2, max2, min3, max3, min4, max4 = lm.data_processing(n_train,historical,batch_size,total,header_list)
@@ -148,7 +127,6 @@ def main():
     print('precision:', precision)
     print('recall:', recall)
     print('f1:', f1)
-    test = test_out
     import matplotlib.pyplot as plt
     plt.figure()
     plt.plot(test_out[:,0,0].reshape(-1,1), label='Predict')

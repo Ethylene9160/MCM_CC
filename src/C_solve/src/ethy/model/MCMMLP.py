@@ -16,10 +16,24 @@ import python.data_reader as mDR
 ##############################
 ### change the path ples #####
 ##############################
-cppyy.include('../../cpp/PY_MPL.h')
+cppyy.include(r'D:\ComputerPrograming\github\MCM_CC_ethy\src\C_solve\src\cpp\PY_MPL.h')
 vector_double = cppyy.gbl.std.vector['double']
 vector_vector_double = cppyy.gbl.std.vector[cppyy.gbl.std.vector['double']]
 vector_vector_vector_double = cppyy.gbl.std.vector[cppyy.gbl.std.vector[cppyy.gbl.std.vector['double']]]
+
+keys = [
+                            'p1_points_won', 'p2_points_won', \
+                            'p1_double_fault', 'p2_double_fault', \
+                            'p1_distance_run', 'p2_distance_run', \
+                            'p1_break_pt_won', 'p2_break_pt_won', \
+                            'p1_break_pt_missed', 'p2_break_pt_missed', \
+                            'p1_unf_err','p2_unf_err',\
+                            'p1_sets', 'p2_sets', \
+                            'p1_games', 'p2_games', \
+                            'p1_score', 'p2_score', \
+
+                            'p1_winner', 'p1_ace'
+    ]
 
 class CPP_Storage:
     def __init__(self, LR_VOKE, losses, epoches, lr, h, w, b):
@@ -207,6 +221,7 @@ class MCMMLP(MCModel):
 if __name__ == '__main__':
     # player_list = mDR.getList('../../statics/training/session_train.csv')
     # 加载CSV数据
+<<<<<<< HEAD
     keys = [
                             'p1_points_won', 'p2_points_won', \
                             'p1_double_fault', 'p2_double_fault', \
@@ -219,6 +234,9 @@ if __name__ == '__main__':
                             'p1_score', 'p2_score', \
                             'p1_winner', 'p1_ace'
     ]
+=======
+
+>>>>>>> da7221a3ce550d13ef102a73dde13558a62910ba
     train_player_list = mDR.getList('../../statics/training/session_train.csv')
     test_player_list = mDR.getList('../../statics/training/session_test.csv')
     X_train,y_train = mDR.getXY(train_player_list, keys, 5)

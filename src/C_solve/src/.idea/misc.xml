@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Black">
-    <option name="sdkName" value="tra" />
+    <option name="sdkName" value="MCM" />
   </component>
-<<<<<<< HEAD
-  <component name="ProjectRootManager" version="2" project-jdk-name="tra" project-jdk-type="Python SDK" />
-=======
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12" project-jdk-type="Python SDK" />
->>>>>>> 88dcf0b91f91233e221be919e096ef210eb1262f
+  <component name="ProjectRootManager" version="2" project-jdk-name="MCM" project-jdk-type="Python SDK" />
 </project>

@@ -56,3 +56,10 @@ class MCModel:
         recall = TP / (TP + FN)
         f1 = 2 * precision * recall / (precision + recall)
         return accuracy, precision, recall, f1
+
+    def r2_score(self, y, y_pred):
+        if not isinstance(y, np.ndarray):
+            y = np.array(y)
+        if not isinstance(y_pred, np.ndarray):
+            y_pred = np.array(y_pred)
+        return 1 - np.sum(np.square(y - y_pred)) / np.sum(np.square(y - np.mean(y)))
