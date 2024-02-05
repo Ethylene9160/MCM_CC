@@ -31,14 +31,22 @@ class MCModel:
     def judge(self, y, y_pred):
         if not isinstance(y, np.ndarray):
             y = np.array(y)
-        y = (y>0.5).astype(int)
+        y = (y>0.5)
         if not isinstance(y_pred, np.ndarray):
             y_pred = np.array(y_pred)
-        y_pred = (y_pred>0.5).astype(int)
+        y_pred = (y_pred>0.5)
         TP = np.sum(np.logical_and(y_pred == 1, y == 1))
         FP = np.sum(np.logical_and(y_pred == 1, y == 0))
         FN = np.sum(np.logical_and(y_pred == 0, y == 1))
         accuracy = np.mean(np.equal(y, y_pred))
+        # if TP+FP == 0:
+        #     precision = 0
+        # else:
+        #     precision = TP / (TP + FP)
+        # if TP+FN == 0:
+        #     recall = 0
+        # else:
+        #     recall = TP / (TP + FN)
         precision = TP / (TP + FP)
         recall = TP / (TP + FN)
         f1 = 2 * precision * recall / (precision + recall)
