@@ -66,7 +66,10 @@ class MSMSVM(MCModel):
         # 训练SVM模型
         super().__init__()
         # self.svm_model = SVR()
-        self.svm_model = SVR(kernel='rbf', C=1.0, epsilon=0.1)
+        self.svm_model = SVR(kernel='rbf', C=3, epsilon=0.001)
+        # self.svm_model = SVR(kernel = 'poly', degree = 3)
+        # self.svm_model = SVR(kernel='linear')
+
     def train(self, X, y):
         self.svm_model.fit(X, y)
 
